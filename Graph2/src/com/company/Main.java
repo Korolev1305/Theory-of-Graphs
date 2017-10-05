@@ -9,9 +9,10 @@ public class Main {
         Graph graph = new Graph(new ArrayList<Integer>(Arrays.asList(0,1,2,1,0)),
                 new ArrayList<Integer>(Arrays.asList(1,2,3,3,2)));
         graph.print();
-        //graph.add(11,10);
+        graph.add(4,5);
+        graph.add(5,6);
         graph.print();
-        //graph.deleteEdgeByNumber(1);
+        //graph.deleteEdgeByNumber(5);
         graph.print();
         graph.connectedComponent();
     }

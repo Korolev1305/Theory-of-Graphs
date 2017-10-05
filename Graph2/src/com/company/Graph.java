@@ -25,7 +25,7 @@ public class Graph {
         }
         for (int i=0;i<I.size();i++)
             if (I.get(i)>top) top = I.get(i);
-        for (int i=0;i<=top;i++){
+        for (int i=0;i<=top+1;i++){
             H.add(-1);
         }
         for (int i=0;i<I.size();i++){
@@ -42,7 +42,9 @@ public class Graph {
         J.add(j);
         IJ.addAll(I.size()-1,new ArrayList<Integer>(Arrays.asList(i,j)));
         int size = H.size();
-        for (int z=0;z<=i-size;z++) H.add(-1);
+        int max=Math.max(i,j);
+        for (int z=0;z<=max-size;z++) H.add(-1);
+        System.out.println(H.size());
         L.add(H.get(i));
         H.set(i,I.size()-1);
 
@@ -107,6 +109,8 @@ public class Graph {
         int k=0;
         int j=0;
         int w=0;
+
+        System.out.println(numComp);
         while(true)
         {
             numComp.set(vertex,currComp);
@@ -117,7 +121,7 @@ public class Graph {
             }
             if (k!=-1)
             {
-                Hn.set(vertex,numComp.get(k));
+                Hn.set(vertex,L.get(k));
                 S.set(w,vertex);
                 w++;
                 vertex=j;
@@ -143,9 +147,10 @@ public class Graph {
             numComp.add(-1);
             S.add(0);
         }
-        ArrayList<Integer> Hn=new ArrayList<Integer>();
+        ArrayList<Integer> Hn;
         Hn=H;
         int x=-1;
+        System.out.println(H);
         for (int i0=0;i0<H.size();i0++)
         {
             if (numComp.get(0)!=-1) continue;
