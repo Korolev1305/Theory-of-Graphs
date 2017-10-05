@@ -28,7 +28,7 @@ public class Graph {
         for (int i=0;i<=top+1;i++){
             H.add(-1);
         }
-        for (int i=0;i<I.size();i++){
+        for (int i=0;i<=IJ.size();i++){
             L.add(-1);
         }
         for (int k=0;k<I.size();k++){
@@ -153,7 +153,7 @@ public class Graph {
         System.out.println(H);
         for (int i0=0;i0<H.size();i0++)
         {
-            if (numComp.get(0)!=-1) continue;
+            if (numComp.get(i0)!=-1) continue;
             x++;
             i=i0;
             DFS(i,x,Hn,S);
