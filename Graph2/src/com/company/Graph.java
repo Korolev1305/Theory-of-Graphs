@@ -3,15 +3,26 @@ package com.company;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 public class Graph {
-    private ArrayList<Integer> I,J,H,L;
+    public ArrayList<Integer> I,J,H,L,IJ,numComp;
     public Graph(ArrayList<Integer> I, ArrayList<Integer> J){
         this.I=I;
         this.J=J;
         this.L = new ArrayList<Integer>();
         this.H = new ArrayList<Integer>();
         int top = -1;
+        IJ = new ArrayList<Integer>();
+        for (int i=0;i<I.size()*2;i++)
+        {
+            IJ.add(0);
+        }
+        for (int i=0;i<I.size();i++)
+        {
+            IJ.set(i,I.get(i));
+            IJ.set(2*I.size()-1-i,J.get(i));
+        }
         for (int i=0;i<I.size();i++)
             if (I.get(i)>top) top = I.get(i);
         for (int i=0;i<=top;i++){
@@ -29,6 +40,7 @@ public class Graph {
     public void add(int i,int j){
         I.add(i);
         J.add(j);
+        IJ.addAll(I.size()-1,new ArrayList<Integer>(Arrays.asList(i,j)));
         int size = H.size();
         for (int z=0;z<=i-size;z++) H.add(-1);
         L.add(H.get(i));
@@ -62,7 +74,7 @@ public class Graph {
     {
         int arcB=0;
         for (int k = H.get(vertexB); k != -1; k = L.get(k)) {
-            if ((I.get(k) == vertexB) && (J.get(k) == vertexE)) {
+            if (((I.get(k) == vertexB) && (J.get(k) == vertexE)) || ((I.get(k)== vertexE) && (J.get(k)==vertexB))){
                 arcB = k;
                 break;
             }
@@ -89,6 +101,59 @@ public class Graph {
                     L.set(temp,-1);
                 }
             }
+    }
+    public void DFS(int vertex,int currComp,ArrayList<Integer> Hn,ArrayList<Integer> S)
+    {
+        int k=0;
+        int j=0;
+        int w=0;
+        while(true)
+        {
+            numComp.set(vertex,currComp);
+            for (k=Hn.get(vertex);k!=-1;k=L.get(k))
+            {
+                j=IJ.get(2*I.size()-1-k);
+                if (numComp.get(j)==-1) break;
+            }
+            if (k!=-1)
+            {
+                Hn.set(vertex,numComp.get(k));
+                S.set(w,vertex);
+                w++;
+                vertex=j;
+            }
+            else
+            {
+                if (w == 0) break;
+                else
+                {
+                    w--;
+                    vertex=S.get(w);
+                }
+            }
+        }
+    }
+    public void connectedComponent()
+    {
+        int i;
+        ArrayList<Integer> S = new ArrayList<Integer>();
+        numComp = new ArrayList<Integer>();
+        for (int k=0;k<H.size();k++)
+        {
+            numComp.add(-1);
+            S.add(0);
+        }
+        ArrayList<Integer> Hn=new ArrayList<Integer>();
+        Hn=H;
+        int x=-1;
+        for (int i0=0;i0<H.size();i0++)
+        {
+            if (numComp.get(0)!=-1) continue;
+            x++;
+            i=i0;
+            DFS(i,x,Hn,S);
+        }
+        System.out.print(numComp);
     }
 
 }
