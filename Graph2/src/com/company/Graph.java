@@ -53,7 +53,6 @@ public class Graph {
         int max=Math.max(i,j);
         for (int z=0;z<=max-size;z++)
             H.add(-1);
-        System.out.println(H.size());
         L.add(H.get(i));
         H.set(i,I.size()-1);
 
@@ -64,7 +63,7 @@ public class Graph {
             String graph = "";
             graph += ("{");
             for (int i = 0; i < H.size(); i++) {
-                if (H.get(i) == -1) graph += (i + "->" + i + ",");
+                //if (H.get(i) == -1) graph += (i + "->" + i + ",");
                 for (int k = H.get(i); k != -1; k = L.get(k)) {
                     graph += (I.get(k) + "->" + J.get(k) + ",");
                 }
