@@ -2,6 +2,7 @@ package com.company;
 
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -166,6 +167,57 @@ public class Graph {
             DFS(i,x,Hn,S);
         }
         System.out.print(numComp);
+    }
+    public ArrayList<Integer> BFS(int vertex,ArrayList<Integer> I,ArrayList<Integer> J)
+    {
+        ArrayList<ArrayList<Integer>> graph = new ArrayList<>();
+        int max=-1;
+        for (int i=0;i<I.size();i++)
+            if (I.get(i)>max)
+            {
+                max=I.get(i);
+                if (J.get(i)>max) max=J.get(i);
+            }
+            max++;
+        for (int i=0;i<max;i++)
+        {
+            graph.add(new ArrayList<Integer>());
+            for (int j=0;j<max;j++)
+                graph.get(i).add(-1);
+        }
+        for (int k=0;k<I.size();k++)
+        {
+            int i=I.get(k);
+            int j=J.get(k);
+            graph.get(i).add(graph.size()-1,j);
+            graph.get(j).add(graph.size()-1,i);
+        }
+        ArrayList<Integer> rang=new ArrayList<Integer>(I.size());
+        ArrayList<Integer> P=new ArrayList<Integer>(I.size());
+        for (int i=0;i<max;i++) {
+            rang.add(-1);
+            P.add(-1);
+        }
+        ArrayDeque<Integer> q=new ArrayDeque<Integer>() {
+        };
+        q.push(vertex);
+        rang.set(vertex,0);
+        while(!q.isEmpty()) {
+            int from = q.peekFirst();
+            q.pop();
+            for(int i=0;i<graph.get(from).size();i++)
+            {
+                int to = graph.get(from).get(i);
+                if (to>=0)
+                    if((rang.get(to))==-1)
+                    {
+                        q.push(to);
+                        rang.set(to,rang.get(from)+1);
+                        P.set(to,from);
+                    }
+            }
+        }
+        return P;
     }
 
 }

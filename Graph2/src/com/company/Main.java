@@ -13,5 +13,8 @@ public class Main {
         graph.add(7,8);
         graph.print();
         graph.connectedComponent();
+        ArrayList<Integer> P = graph.BFS(1,graph.I,graph.J);
+        System.out.println();
+        System.out.println(P+" ");
     }
 }
