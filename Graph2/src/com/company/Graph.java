@@ -35,7 +35,6 @@ public class Graph {
         System.out.println(L.size());
         for (int k=0;k<I.size();k++){
             int i = I.get(k);
-            int j = J.get(k);
             L.set(k,H.get(i));
             H.set(i,k);
         }
@@ -189,8 +188,8 @@ public class Graph {
         {
             int i=I.get(k);
             int j=J.get(k);
-            graph.get(i).add(graph.size()-1,j);
-            graph.get(j).add(graph.size()-1,i);
+            graph.get(i).add(j);
+            graph.get(j).add(i);
         }
         ArrayList<Integer> rang=new ArrayList<Integer>(I.size());
         ArrayList<Integer> P=new ArrayList<Integer>(I.size());
@@ -198,8 +197,7 @@ public class Graph {
             rang.add(-1);
             P.add(-1);
         }
-        ArrayDeque<Integer> q=new ArrayDeque<Integer>() {
-        };
+        ArrayDeque<Integer> q=new ArrayDeque<Integer>();
         q.push(vertex);
         rang.set(vertex,0);
         while(!q.isEmpty()) {
