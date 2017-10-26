@@ -13,9 +13,15 @@ public class Graph {
         this.I=I;
         this.J=J;
         this.C=C;
+
         this.L = new ArrayList<Integer>();
         this.H = new ArrayList<Integer>();
         int top = -1;
+        ArrayList<Integer> temp = new ArrayList<>();
+        temp.addAll(I);
+        I.addAll(J);
+        J.addAll(temp);
+        C.addAll(C);
         IJ = new ArrayList<Integer>();
         for (int i=0;i<I.size()*2;i++)
         {
@@ -35,34 +41,45 @@ public class Graph {
         for (int i=0;i<=top;i++){
             H.add(-1);
         }
-        for (int i=0;i<IJ.size();i++){
+        for (int i=0;i<I.size();i++){
             L.add(-1);
         }
-        System.out.println(L.size());
         for (int k=0;k<I.size();k++){
             int i = I.get(k);
             L.set(k,H.get(i));
             H.set(i,k);
         }
+        System.out.println(H+"\n"+L+"\n"+IJ+"\n");
     }
     public void add(int i,int j,int c){
-        if (i>j){
+        /*if (i>j){
             int temp;
             temp=j;
             j=i;
             i=temp;
-        }
-        I.add(i);
-        J.add(j);
-        C.add(c);
-        IJ.addAll(I.size()-1,new ArrayList<Integer>(Arrays.asList(i,j)));
+        }*/
+        I.add(I.size()/2,i);
+        J.add(J.size()/2,j);
+        C.add(C.size()/2,c);
+
         int size = H.size();
         int max=Math.max(i,j);
         for (int z=0;z<=max-size;z++)
             H.add(-1);
-        L.add(H.get(i));
-        H.set(i,I.size()-1);
-
+        L.add(-1);
+        for (int k = H.get(i); k != -1; k = L.get(k)) {
+        }
+        L.set(L.get(I.size()/2-1),L.get(H.get(i)));
+        L.set(H.get(i),L.get(I.size()/2-1));
+        L.set(I.size()/2-1,H.get(i));
+        H.set(i,I.size()/2-1);
+        I.add(j);
+        J.add(i);
+        C.add(c);
+        L.add(H.get(j));
+        H.set(j,I.size()-1);
+        IJ.addAll(I.size()-1,new ArrayList<Integer>(Arrays.asList(i,j,j,i)));
+        System.out.println(H+"\n"+L+"\n");
 
     }
     public void print() {
@@ -193,9 +210,9 @@ public class Graph {
             graph.get(i).add(j);
             graph.get(j).add(i);
         }
-        ArrayList<Integer> rang=new ArrayList<Integer>(I.size());
-        ArrayList<Integer> P=new ArrayList<Integer>(I.size());
-        for (int i=0;i<I.size();i++) {
+        ArrayList<Integer> rang=new ArrayList<Integer>();
+        ArrayList<Integer> P=new ArrayList<Integer>();
+        for (int i=0;i<I.size()/2;i++) {
             rang.add(-1);
             P.add(-1);
         }
