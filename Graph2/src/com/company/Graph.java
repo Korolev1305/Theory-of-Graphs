@@ -67,10 +67,6 @@ public class Graph {
         for (int z=0;z<=max-size;z++)
             H.add(-1);
         L.add(-1);
-        for (int k = H.get(i); k != -1; k = L.get(k)) {
-        }
-        L.set(L.get(I.size()/2-1),L.get(H.get(i)));
-        L.set(H.get(i),L.get(I.size()/2-1));
         L.set(I.size()/2-1,H.get(i));
         H.set(i,I.size()/2-1);
         I.add(j);
