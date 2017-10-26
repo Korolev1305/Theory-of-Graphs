@@ -9,28 +9,19 @@ import java.util.Arrays;
 public class Graph {
     private ArrayList<Integer> I,J,C,H,L,IJ,numComp;
     int[]Bucket,Fw,Bk;
+    int n=0;
+    int m=0;
     public Graph(ArrayList<Integer> I, ArrayList<Integer> J,ArrayList<Integer> C){
         this.I=I;
         this.J=J;
         this.C=C;
-
         this.L = new ArrayList<Integer>();
         this.H = new ArrayList<Integer>();
         int top = -1;
-        ArrayList<Integer> temp = new ArrayList<>();
-        temp.addAll(I);
-        I.addAll(J);
-        J.addAll(temp);
-        C.addAll(C);
         IJ = new ArrayList<Integer>();
         for (int i=0;i<I.size()*2;i++)
         {
             IJ.add(0);
-        }
-        for (int i=0;i<I.size();i++)
-        {
-            IJ.set(i,I.get(i));
-            IJ.set(2*I.size()-1-i,J.get(i));
         }
         for (int i=0;i<I.size();i++)
         {
@@ -41,40 +32,46 @@ public class Graph {
         for (int i=0;i<=top;i++){
             H.add(-1);
         }
-        for (int i=0;i<I.size();i++){
-            L.add(-1);
-        }
         for (int k=0;k<I.size();k++){
             int i = I.get(k);
-            L.set(k,H.get(i));
-            H.set(i,k);
+            IJ.set(k,I.get(k));
+            IJ.set(2*I.size()-1-k,J.get(k));
+            L.add(H.get(i));
+            H.set(i,m++);
         }
+        for (int k=0;k<J.size();k++){
+            int j = J.get(k);
+            L.add(H.get(j));
+            H.set(j,m++);
+        }
+
         System.out.println(H+"\n"+L+"\n"+IJ+"\n");
     }
     public void add(int i,int j,int c){
-        /*if (i>j){
-            int temp;
-            temp=j;
-            j=i;
-            i=temp;
-        }*/
-        I.add(I.size()/2,i);
-        J.add(J.size()/2,j);
-        C.add(C.size()/2,c);
-
+        I.add(i);
+        J.add(j);
+        C.add(c);
         int size = H.size();
         int max=Math.max(i,j);
-        for (int z=0;z<=max-size;z++)
+
+        L=new ArrayList<>();
+        H=new ArrayList<>();
+        for (int z=0;z<=max;z++) {
             H.add(-1);
-        L.add(-1);
-        L.set(I.size()/2-1,H.get(i));
-        H.set(i,I.size()/2-1);
-        I.add(j);
-        J.add(i);
-        C.add(c);
-        L.add(H.get(j));
-        H.set(j,I.size()-1);
-        IJ.addAll(I.size()-1,new ArrayList<Integer>(Arrays.asList(i,j,j,i)));
+        }
+
+        m=0;
+        for (int k=0;k<I.size();k++){
+            int z = I.get(k);
+            L.add(H.get(z));
+            H.set(z,m++);
+        }
+        for (int k=0;k<J.size();k++) {
+            int h = J.get(k);
+            L.add(H.get(h));
+            H.set(h, m++);
+        }
+        IJ.addAll(I.size()-1,new ArrayList<Integer>(Arrays.asList(i,j)));
         System.out.println(H+"\n"+L+"\n");
 
     }
@@ -84,7 +81,7 @@ public class Graph {
             graph += ("{");
             for (int i = 0; i < H.size(); i++) {
                 for (int k = H.get(i); k != -1; k = L.get(k)) {
-                    graph += ("{"+I.get(k) + "->" + J.get(k) + "," +  "\"" +C.get(k)+"\""+ "}"+",");;
+                    graph += (IJ.get(k) + "->" + IJ.get(IJ.size()-1-k) + ",");
                 }
             }
             graph = graph.substring(0, graph.length() - 1);
@@ -208,7 +205,7 @@ public class Graph {
         }
         ArrayList<Integer> rang=new ArrayList<Integer>();
         ArrayList<Integer> P=new ArrayList<Integer>();
-        for (int i=0;i<I.size()/2;i++) {
+        for (int i=0;i<I.size();i++) {
             rang.add(-1);
             P.add(-1);
         }
@@ -233,60 +230,38 @@ public class Graph {
         return P;
     }
 
-    public ArrayList<Integer> BFS2(int vertex){
-        ArrayList<Integer> R= new ArrayList<>();
-        ArrayList<Integer> P= new ArrayList<>();
-        ArrayList<Integer> Q= new ArrayList<>();
-        int r;
-        int w;
-        for (int i=0;i<H.size();i++)
-        {
-            R.add(Integer.MAX_VALUE);
-            P.add(-2);
-            Q.add(0);
-        }
-        R.set(vertex,0);
-        P.set(vertex,-1);
 
-        Q.set(0,vertex);
-        r=0;
-        w=1;
-        while(r<w){
-            int i=Q.get(r);
-            r++;
-            for(int k=H.get(i);k!=-1;k=L.get(k))
-            {
-                int j=J.get(k);
-                if(R.get(j)==H.size()){
-                    R.set(j,R.get(i)+1);
-                    P.set(j,k);
-                    Q.set(w,j);
-                    w++;
-                }
-            }
-        }
-        return P;
-    }
 
     public void Ford(int vertex) {
-        int[] R = new int[I.size()];
-        int[] P = new int[I.size()];
+        int i0=0;
+        int j0=0;
+        int[] R = new int[IJ.size()];
+        int[] P = new int[IJ.size()];
         for (int i = 0; i < R.length; i++) {
             R[i] = Integer.MAX_VALUE;
         }
         ArrayDeque<Integer> Q = new ArrayDeque<Integer>();
         R[vertex] = 0;
         Q.add(vertex);
-        for (int i = 0; i < I.size(); ++i) {
+        for (int i = 0; i < IJ.size(); ++i) {
             P[i] = -1;
         }
         while (!Q.isEmpty()) {
             int from = Q.poll();
-            for (int i = 0; i < I.size(); i++) {
-                if (I.get(i) == from) {
-                    int to = J.get(i);
-                    if (R[from] + C.get(i) < R[to]) {
-                        R[to] = R[from] + C.get(i);
+            for (int i = 0; i < IJ.size(); i++) {
+                if(i<I.size()) {
+                    i0 = I.get(i);
+                    j0=J.get(i);
+                }
+                else
+                {
+                    j0 = I.get(i-I.size());
+                    i0=J.get(i-I.size());
+                }
+                if (i0 == from) {
+                    int to = j0;
+                    if (R[from] + C.get(i%C.size()) < R[to]) {
+                        R[to] = R[from] + C.get(i%C.size());
                         Q.add(to);
                         P[to] = i;
                     }
@@ -299,13 +274,18 @@ public class Graph {
             graph += ("{");
             for (int i = 0; i < P.length; i++)
             {
+                System.out.print(P[i]+" ");
                 if (P[i]==-1) continue;
-                graph += ("{"+I.get(P[i]) + "->" + J.get(P[i]) + "," +  "\"" +C.get(P[i])+"\""+ "}"+",");
+                if (P[i]>=I.size())
+                    graph += ("{"+J.get(P[i]-I.size()) + "->" +I.get(P[i]-J.size()) + "," +  "\"" +C.get(P[i]%C.size())+"\""+ "}"+",");
+                else
+                    graph += ("{"+I.get(P[i]) + "->" +J.get(P[i]) + "," +  "\"" +C.get(P[i]%C.size())+"\""+ "}"+",");
             }
             graph = graph.substring(0, graph.length() - 1);
             graph += ("}");
             writer.write(graph);
             writer.flush();
+            System.out.println();
         }
         catch(IOException ex){
 
@@ -315,6 +295,7 @@ public class Graph {
     public void Deikstra(int vertex)
     {
         int i;
+        int j=0;
         int[] R = new int[H.size()];
         int[] P = new int[H.size()];
         for (i=0;i<H.size();i++)
@@ -347,15 +328,17 @@ public class Graph {
             while ((i=GET(b))!=-1)
                 for (int k=H.get(i);k!=-1;k=L.get(k))
                 {
-                    int j=J.get(k);
+                    if(k>=J.size()) {
+                        j = I.get(k - J.size());
+                    }
+                    else j=J.get(k);
                     int rj=R[j];
-                    if (R[i]+C.get(k)<rj)
-                    {
-                        R[j]=R[i]+C.get(k);
-                        P[j]=k;
-                        if(rj!=Integer.MAX_VALUE)
-                            REMOVE(j,rj);
-                        INSERT(j,R[j]);
+                    if (R[i] + C.get(k%C.size()) < rj) {
+                        R[j] = R[i] + C.get(k%C.size());
+                        P[j] = k;
+                        if (rj != Integer.MAX_VALUE)
+                            REMOVE(j, rj);
+                        INSERT(j, R[j]);
                     }
                 }
         try (FileWriter writer = new FileWriter("/Users/ewigkeit/Desktop/Deikstra.txt", false)) {
@@ -365,7 +348,10 @@ public class Graph {
             {
                 System.out.print(P[i]+" ");
                 if (P[i]==-1) continue;
-                graph += ("{"+I.get(P[i]) + "->" + J.get(P[i]) + "," +  "\"" +C.get(P[i])+"\""+ "}"+",");
+                if (P[i]>=I.size())
+                graph += ("{"+J.get(P[i]-I.size()) + "->" +I.get(P[i]-J.size()) + "," +  "\"" +C.get(P[i]%C.size())+"\""+ "}"+",");
+                else
+                    graph += ("{"+I.get(P[i]) + "->" +J.get(P[i]) + "," +  "\"" +C.get(P[i]%C.size())+"\""+ "}"+",");
             }
             graph = graph.substring(0, graph.length() - 1);
             graph += ("}");
